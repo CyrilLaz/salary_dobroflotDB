@@ -1,0 +1,26 @@
+{
+  "name": "salarybd_dobroflot",
+  "version": "0.0.2",
+  "description": "salaryDBapp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CyrilLaz/salaryBD_dobroflot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CyrilLaz/salaryBD_dobroflot/issues"
+  },
+  "homepage": "https://github.com/CyrilLaz/salaryBD_dobroflot#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "jsdom": "^20.0.1",
+    "mongodb": "^4.11.0",
+    "mongoose": "^6.8.0",
+    "request": "^2.88.2"
+  }
+}
