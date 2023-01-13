@@ -2,9 +2,7 @@ const fs = require('fs');
 const dayjs = require('dayjs');
 const { resolve,join } = require('path');
 
-const nameFile = `./ymrf_${dayjs(new Date()).format('DD_MM_YYYY')}.zip`;
 const dir = './archive';
-const pathToFile = join(resolve(dir), nameFile);
 
 if (!fs.existsSync(dir)) {
   // проверка наличия папки архива
@@ -12,6 +10,9 @@ if (!fs.existsSync(dir)) {
 }
 
 const uploadArchive = (req) => {
+  const nameFile = `./ymrf_${dayjs(new Date()).format('DD_MM_YYYY')}.zip`;
+  const pathToFile = join(resolve(dir), nameFile);
+  
   const input = fs.createWriteStream(pathToFile);
   return new Promise((resolve) => {
     req
