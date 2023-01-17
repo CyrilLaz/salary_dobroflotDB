@@ -14,4 +14,16 @@ const userSchema = mongoose.Schema(
   { versionKey: false }
 );
 
+userSchema.statics.findOrCreate = function (name) {
+  return this.findOne({name}).then(user=>{
+       if(!user) {
+           return this.create({name})
+       }
+       return user
+   })
+};
+
+userSchema.statics.findAndUpdate = function(id, update){
+  return this.findByIdAndUpdate(id, update,{new:true})
+}
 module.exports = mongoose.model('user', userSchema);

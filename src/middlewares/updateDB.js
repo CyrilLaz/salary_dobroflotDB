@@ -1,11 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-const findDepartmentCreateOrUpdate = require('../components/findDepartmentCreateOrUpdate');
-const findSpotCreateOrUpdate = require('../components/findSpotCreateOrUpdate');
-const {
-  findUserOrCreate,
-  findUserAndUpdate,
-} = require('../components/findUserCreateOrUpdate');
+const User = require('../models/User');
+const Department = require('../models/Department');
+const Spot = require('../models/Spot');
+
 const makeObj = require('../utils/makeObj');
 const EmptyError = require('../errors/EmptyError');
 const departments = require('../constants/departments');
@@ -28,20 +26,18 @@ async function updateDB() {
       //   console.log(period);
       if (obj) {
         const period = obj.period;
-        const dep = await findDepartmentCreateOrUpdate(departments[i], period);
-        if (!dep) {
-          continue;
-        }
+        const dep = await Department.CreateOrUpdate(departments[i], period);
+        if (!dep) continue;
         const arrayDepartment = obj.createArray();
         arrayDepartment.forEach(async (el) => {
           /* разбираем объект - создаем пользователя если его нет, 
               и создаем документ спота или изменяем его если он есть
           */
-          const user = await findUserOrCreate(el.name);
+          const user = await User.findOrCreate(el.name);
           el.spots.forEach(async (spt) => {
-            const spot = await findSpotCreateOrUpdate(spt, dep, user);
+            const spot = await Spot.CreateOrUpdate(spt, dep, user);
             if (spot) {
-              findUserAndUpdate(user._id, { $addToSet: { spots: spot._id } });
+              await User.findByIdAndUpdate(user._id, { $addToSet: { spots: spot._id } });
             }
           });
         });
