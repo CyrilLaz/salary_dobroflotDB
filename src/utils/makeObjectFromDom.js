@@ -1,12 +1,12 @@
-class Refactor {
-  constructor(page, scheme) {
+class MakeObject {
+  constructor(page, numberPage, scheme) {
     this.page = page;
     this.table = this.page.querySelector('TABLE');
-    this.tableRows=Array.from(this.table.querySelectorAll('tr'));
+    this.tableRows = Array.from(this.table.querySelectorAll('tr'));
     this.result = [];
     this.numberPage = numberPage;
     this.scheme = scheme;
-    this.rows = this.tableRows.slice(3,this.tableRows.length-1);
+    this.rows = this.tableRows.slice(3, this.tableRows.length - 1);
     this.namesSelectorArray = this._findNameRows();
 
     this.nameFields = Array.from(
@@ -14,25 +14,24 @@ class Refactor {
         this.namesSelectorArray.some((sel) => el.querySelector(sel))
       )
     );
+    this.period = this._getDates();
   }
-  
-  _getInfo() {
+
+  _getDates() {
     const infoArray = this.table
       .querySelector('.R0C0 span')
       .textContent.replace(/\s/g, ' ')
       .split(' ');
-    const period = [
-      this._makeDateObject(infoArray[2]),
-      this._makeDateObject(infoArray[4]),
-    ];
-    const department = this.scheme.department;
-    const brigade = this.scheme.brigade;
-    return { period, department, brigade };
+    const period = {
+      from: this._makeDateObject(infoArray[2]),
+      till: this._makeDateObject(infoArray[4]),
+    };
+    return period;
   }
 
-  createObject() {
-
+  createArray() {
     this._makeObject();
+    //this._getInfo();
     return this.result;
   }
 
@@ -58,40 +57,28 @@ class Refactor {
   }
 
   _makeObject() {
-    const info = this._getInfo();
     this.nameFields.forEach((el) => {
-      const firstChild = this._getChildElement(el);
+      const name = this._getChildElement(el);
       const spots = this._getSpots(el);
 
-      //const details = {info,spots};
       const obj = {
-        name: firstChild.textContent,
-        login: this._makeLoginFromName(firstChild.textContent),
-        details: {
-          brigade: info.brigade,
-          department: info.department,
-        },
+        name: name.textContent,
       };
-      obj.details.period = info.period;
-      obj.details.spots = spots;
+      obj.period = this.period;
+      obj.spots = spots;
 
       this.result.push(obj);
-      // this.result[firstChild.textContent] = this._getSpots(el);
     });
-  }
-
-  _makeLoginFromName(name) {
-    return name.split(' ', 1)[0];
   }
 
   _getSpots(el) {
     const res = [];
-    let spot = el.nextElementSibling;
+    let name = el.nextElementSibling;
 
     do {
-      res.push(this._getDetails(spot));
-      spot = spot.nextElementSibling;
-    } while (!this.nameFields.includes(spot) && this.rows.includes(spot));
+      res.push(this._getDetails(name));
+      name = name.nextElementSibling;
+    } while (!this.nameFields.includes(name) && this.rows.includes(name));
 
     return res;
   }
@@ -104,7 +91,7 @@ class Refactor {
   _getDetails(el) {
     const res = {};
     const num = el.querySelectorAll('span');
-    res.spot = this._getChildElement(el).textContent;
+    res.name = this._getChildElement(el).textContent;
     res.ktu = this._makeNumberFromString(num[0].textContent);
     res.hours = this._makeNumberFromString(num[1].textContent);
     res.accrual = this._makeNumberFromString(num[2].textContent);
@@ -121,4 +108,4 @@ class Refactor {
   }
 }
 
-module.exports = { Refactor: Refactor };
+module.exports = { MakeObject };

@@ -1,20 +1,21 @@
 const mongoose = require('mongoose');
 
 const spotSchema = mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
     period: { from: Date, till: Date },
-    worker: { 
+    user: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User'
+        ref: 'user'
     },
     department: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Department'
+        ref: 'department'
     },
     name: String,
     ktu: Number,
     hours: Number,
     accrual: Number,
     bonus: Number,
-    bonus: Number,
-});
+
+},    { versionKey: false },);
+
+module.exports = mongoose.model('spot', spotSchema);
