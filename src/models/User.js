@@ -4,7 +4,7 @@ const userSchema = mongoose.Schema(
   {
     name: String,
     login: { type: String, ref: 'name' },
-    password: { type: String, default: '11223344' },
+    password: { type: String, default: '11223344', select: false },
     created: {
       type: Date,
       default: Date.now,
@@ -15,15 +15,15 @@ const userSchema = mongoose.Schema(
 );
 
 userSchema.statics.findOrCreate = function (name) {
-  return this.findOne({name}).then(user=>{
-       if(!user) {
-           return this.create({name})
-       }
-       return user
-   })
+  return this.findOne({ name }).then((user) => {
+    if (!user) {
+      return this.create({ name });
+    }
+    return user;
+  });
 };
 
-userSchema.statics.findAndUpdate = function(id, update){
-  return this.findByIdAndUpdate(id, update,{new:true})
-}
+userSchema.statics.findAndUpdate = function (id, update) {
+  return this.findByIdAndUpdate(id, update, { new: true });
+};
 module.exports = mongoose.model('user', userSchema);
