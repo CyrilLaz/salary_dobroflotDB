@@ -20,7 +20,7 @@ const {
 mongoose.set('strictQuery', false);
 mongoose.connect(PATH_TO_DATA);
 
-// updateDB();
+updateDB();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/upload', uploadArchive);
 

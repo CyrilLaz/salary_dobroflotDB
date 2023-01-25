@@ -9,10 +9,11 @@ const departmentSchema = mongoose.Schema(
   { versionKey: false }
 );
 
-departmentSchema.statics.CreateOrUpdate = function (department, period) {
+departmentSchema.statics.createOrUpdate = function (department, period) {
   return this.findOne(department)
      .then((dep) => {
        if (!dep) {
+        console.log('Создаем коллекцию  департамента');
        return this.create({...department,period});
        }
        if (

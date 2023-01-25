@@ -10,7 +10,8 @@ const departments = require('../constants/departments');
 
 async function updateDB() {
   const dir = path.resolve('.temp');
-
+  let countDep = 0,
+    countUser = 0;
   try {
     const files = await new Promise((resolve, reject) => {
       fs.readdir(dir, (err, files) => {
@@ -23,21 +24,24 @@ async function updateDB() {
 
     for (i = 0; i <= 13; i++) {
       const obj = makeObj(files[i]);
-      //   console.log(period);
       if (obj) {
         const period = obj.period;
-        const dep = await Department.CreateOrUpdate(departments[i], period);
+        const dep = await Department.createOrUpdate(departments[i], period);
         if (!dep) continue;
+        countDep++;
         const arrayDepartment = obj.createArray();
         arrayDepartment.forEach(async (el) => {
           /* разбираем объект - создаем пользователя если его нет, 
               и создаем документ спота или изменяем его если он есть
           */
           const user = await User.findOrCreate(el.name);
+          countUser++;
           el.spots.forEach(async (spt) => {
             const spot = await Spot.CreateOrUpdate(spt, dep, user);
             if (spot) {
-              await User.findByIdAndUpdate(user._id, { $addToSet: { spots: spot._id } });
+              await User.findByIdAndUpdate(user._id, {
+                $addToSet: { spots: spot._id },
+              });
             }
           });
         });
@@ -45,6 +49,9 @@ async function updateDB() {
     }
   } catch (err) {
     return console.log(err);
+  } finally {
+    console.log(`Обновлено департаментов: `, countDep);
+    console.log(`Обновлено записей пользователя: `, countUser);
   }
 }
 

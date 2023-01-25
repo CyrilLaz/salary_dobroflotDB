@@ -18,4 +18,5 @@ const findUserById = (req, res) => {
     .catch((err) => res.status(500).send(err, 'случилось не предвиденное'));
 };
 
+
 module.exports = findUserById;
