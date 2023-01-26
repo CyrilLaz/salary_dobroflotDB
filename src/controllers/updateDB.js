@@ -49,10 +49,10 @@ async function updateDB(filePath, req, res, next) {
     }
     // fs.rmdirSync(dir,(err)=console.log(err))
   } catch (err) {
-    return console.log(err);
+    return next(err);
   } finally {
     if(countDep==0&&countUser==0){
-      return res.status(400).send('Файлы не подходят');
+      return res.status(400).send({message:'Ничего нового!'});
     }
     return res.send({message:`Обновлено департаментов: ${countDep} Обновлено записей пользователя: ${countUser}`});
   }

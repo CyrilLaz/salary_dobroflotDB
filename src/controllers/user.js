@@ -1,10 +1,13 @@
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+const {SECRET_PASS='12121adsad'} = process.env;
+
 
 const findUserById = (req, res) => {
   User.findById(req.params.id)
     .populate({
       path: 'spots',
-    //   match: { from: new Date('2022-09-30T14:00:00.000Z') },
       populate: {
         path: 'department',
       },
@@ -19,22 +22,24 @@ const findUserById = (req, res) => {
 };
 
 const login = (req, res, next) => {
-  const { email, password } = req.body;
-
-  User.findUserByCredentials(email, password)
+  const { login, password } = req.body;
+console.log(req.body);
+  User.findUserByCredentials(login, password)
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        jwtKey, // секретный код
-        { expiresIn: '7d' },
+        SECRET_PASS, // секретный код
+        { expiresIn: '7d' }
       );
-      return res.cookie('jwt', token, {
-        maxAge: 3600000 * 24 * 7,
-        httpOnly: true,
-        sameSite: true,
-      }).send({ data: { ...user, password: undefined } });
+      return res
+        .cookie('jwt', token, {
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true,
+          sameSite: true,
+        })
+        .send({ data: { ...user, password: undefined } });
     })
     .catch(next);
 };
 
-module.exports = findUserById;
+module.exports = {findUserById,login};

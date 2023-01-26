@@ -18,6 +18,6 @@ module.exports = (filePath) =>
       }
       resolve(fileArray);
     } catch (e) {
-      console.log(`Something went wrong. ${e}`);
+      reject(new Error('Плохой архив, не смогли его открыть'))
     }
   });
