@@ -18,5 +18,23 @@ const findUserById = (req, res) => {
     .catch((err) => res.status(500).send(err, 'случилось не предвиденное'));
 };
 
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        jwtKey, // секретный код
+        { expiresIn: '7d' },
+      );
+      return res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+        sameSite: true,
+      }).send({ data: { ...user, password: undefined } });
+    })
+    .catch(next);
+};
 
 module.exports = findUserById;

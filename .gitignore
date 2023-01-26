@@ -5,3 +5,4 @@ objects
 ssl
 archive
 .temp
+.env

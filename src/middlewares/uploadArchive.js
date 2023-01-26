@@ -1,6 +1,6 @@
 const fs = require('fs');
 const dayjs = require('dayjs');
-const { resolve,join } = require('path');
+const { resolve, join } = require('path');
 
 const dir = './archive';
 
@@ -9,10 +9,10 @@ if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
 }
 
-const uploadArchive = (req) => {
+module.exports = (req, res, next) => {
   const nameFile = `./ymrf_${dayjs(new Date()).format('DD_MM_YYYY')}.zip`;
   const pathToFile = join(resolve(dir), nameFile);
-  
+
   const input = fs.createWriteStream(pathToFile);
   return new Promise((resolve) => {
     req
@@ -21,22 +21,14 @@ const uploadArchive = (req) => {
       .on('error', (err) => {
         throw new Error('Что то пошло не так при получении архива');
       });
-  });
-};
-
-module.exports = (req, res, next) => {
-  uploadArchive(req)
+  })
     .then((stats) => {
       if (stats.size !== 0) {
-        res.send({ stats });
-        return next();
+        // res.send({ stats });
+        return next(pathToFile);
       } else {
         throw new Error('Что то пошло не так при получении архива');
       }
     })
-    .catch((err) =>
-      res
-        .status(500)
-        .send({ err, message: err.message })
-    );
+    .catch((err) => res.status(500).send({ err, message: err.message }));
 };

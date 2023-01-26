@@ -5,22 +5,22 @@ const Department = require('../models/Department');
 const Spot = require('../models/Spot');
 
 const makeObj = require('../utils/makeObj');
+const unzip = require('../utils/unzip');
+
 const EmptyError = require('../errors/EmptyError');
 const departments = require('../constants/departments');
 
-async function updateDB() {
+async function updateDB(filePath, req, res, next) {
+  console.log('#');
+  // await unzip(filePath).then(console.log);
   const dir = path.resolve('.temp');
   let countDep = 0,
     countUser = 0;
+
   try {
-    const files = await new Promise((resolve, reject) => {
-      fs.readdir(dir, (err, files) => {
-        if (err) {
-          reject(new EmptyError(err));
-        }
-        resolve(files.sort((a, b) => /\d\d?/.exec(a) - /\d\d?/.exec(b)));
-      });
-    });
+    const files = await unzip(filePath).then((fileArray) =>
+      fileArray.sort((a, b) => /\d\d?/.exec(a) - /\d\d?/.exec(b))
+    );
 
     for (i = 0; i <= 13; i++) {
       const obj = makeObj(files[i]);
@@ -47,11 +47,14 @@ async function updateDB() {
         });
       }
     }
+    // fs.rmdirSync(dir,(err)=console.log(err))
   } catch (err) {
     return console.log(err);
   } finally {
-    console.log(`Обновлено департаментов: `, countDep);
-    console.log(`Обновлено записей пользователя: `, countUser);
+    if(countDep==0&&countUser==0){
+      return res.status(400).send('Файлы не подходят');
+    }
+    return res.send({message:`Обновлено департаментов: ${countDep} Обновлено записей пользователя: ${countUser}`});
   }
 }
 
