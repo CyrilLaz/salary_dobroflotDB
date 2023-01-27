@@ -27,7 +27,7 @@ module.exports.handlerErrors = (err, req, res, next) => {
       .status(dataErrorStatus)
       .send({ message: 'Передан некорректный _id' });
   }
-
+console.log(err);
   return res
     .status(statusCode)
     .send({ message: 'На сервере произошла ошибка' });

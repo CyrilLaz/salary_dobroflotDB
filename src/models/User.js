@@ -16,6 +16,7 @@ const userSchema = mongoose.Schema(
     created: {
       type: Date,
       default: Date.now,
+      select: false,
     },
     spots: [{ type: mongoose.Schema.Types.ObjectId, ref: 'spot' }], // надо найти способ для сортировки массива по дате спота, что удобно при запросе
   },
@@ -39,7 +40,7 @@ userSchema.statics.findAndUpdate = function (id, update) {
 
 userSchema.statics.findUserByCredentials = function (name, password) {
   // попытаемся найти пользователя по почте
-  console.log(name, password);
+  // console.log(name, password);
   return this.findOne({ name })
     .select('+password')
     .populate({
@@ -49,7 +50,7 @@ userSchema.statics.findUserByCredentials = function (name, password) {
       },
     })
     .then((user) => {
-      console.log(user);
+      // console.log(user);
       if (!user) {
         return Promise.reject(
           new UncorrectLoginError('Неправильные почта или пароль')

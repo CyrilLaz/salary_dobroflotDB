@@ -27,7 +27,7 @@ async function updateDB(filePath, req, res, next) {
       if (obj) {
         const period = obj.period;
         const dep = await Department.createOrUpdate(departments[i], period);
-        if (!dep) continue;
+        if (!dep) continue; // если dep==underfined -  файл не имеет новой информации, можно его пропустить
         countDep++;
         const arrayDepartment = obj.createArray();
         arrayDepartment.forEach(async (el) => {

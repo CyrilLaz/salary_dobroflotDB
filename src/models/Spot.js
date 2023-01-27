@@ -38,7 +38,7 @@ spotSchema.statics.CreateOrUpdate = function (spotUpd, department, user) {
       });
     }
     if (spot.hour !== spotUpd.hour) {
-      // если спот есть, свойство объекта hour изменилось, значит есть изменения и их надо внести в БД
+      // если спот есть, значение свойств hour изменилось, значит есть изменения и их надо внести в БД
       this.findByIdAndUpdate(spot._id, {
         ...spotUpd,
         period: department.period,

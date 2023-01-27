@@ -10,6 +10,7 @@ const departmentSchema = mongoose.Schema(
 );
 
 departmentSchema.statics.createOrUpdate = function (department, period) {
+  console.log(period);
   return this.findOne(department)
      .then((dep) => {
        if (!dep) {
@@ -21,7 +22,7 @@ departmentSchema.statics.createOrUpdate = function (department, period) {
          dep.period.till.getTime() == period.till.getTime()
        ) {
          console.log(
-           'подавай следующий файл, тут ничего интерестного'
+           'подавай следующий файл, тут ничего интересного'
          ); /*что делать при совпадении, проверяем следующий файл как бы */
          return ;
        }
