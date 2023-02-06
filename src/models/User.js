@@ -13,15 +13,17 @@ const userSchema = mongoose.Schema(
       minlength: 8,
       select: false,
     },
-    created: {
-      type: Date,
-      default: Date.now,
-      select: false,
-    },
+    // created: {
+    //   type: Date,
+    //   default: Date.now,
+    //   select: false,
+    // },
+    // updateAt: { type: Date, expires: 300, default: Date.now, index: true }, // время жизни между обновлениями юзера
     spots: [{ type: mongoose.Schema.Types.ObjectId, ref: 'spot' }], // надо найти способ для сортировки массива по дате спота, что удобно при запросе
   },
-  { versionKey: false }
+  { versionKey: false, timestamps: true }
 );
+userSchema.index({ "updatedAt": 1 }, { expireAfterSeconds: 60*60*24*365*3 });
 
 userSchema.statics.findOrCreate = function (name) {
   return this.findOne({ name }).then((user) => {
@@ -30,7 +32,8 @@ userSchema.statics.findOrCreate = function (name) {
         (hash) => this.create({ name, password: hash })
       );
     }
-    return user;
+    user.updateAt = Date.now();
+    return user.save();
   });
 };
 
