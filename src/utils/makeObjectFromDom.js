@@ -1,11 +1,9 @@
 class MakeObject {
-  constructor(page, numberPage, scheme) {
+  constructor(page) {
     this.page = page;
     this.table = this.page.querySelector('TABLE');
     this.tableRows = Array.from(this.table.querySelectorAll('tr'));
     this.result = [];
-    this.numberPage = numberPage;
-    this.scheme = scheme;
     this.rows = this.tableRows.slice(3, this.tableRows.length - 1);
     this.namesSelectorArray = this._findNameRows();
 
@@ -83,7 +81,6 @@ class MakeObject {
     return res;
   }
 
-  //_checkspot(el)
   _getChildElement(el) {
     return el.firstElementChild;
   }

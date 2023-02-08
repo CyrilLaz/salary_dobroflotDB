@@ -37,7 +37,7 @@ async function updateDB(filePath, req, res, next) {
           const user = await User.findOrCreate(el.name);
           countUser++;
           el.spots.forEach(async (spt) => {
-            await Spot.CreateOrUpdate(spt, dep, user);
+            await Spot.сreateOrUpdate(spt, dep, user);
             // if (spot) {
             //   await User.findByIdAndUpdate(user._id, {
             //     $addToSet: { spots: spot._id },
