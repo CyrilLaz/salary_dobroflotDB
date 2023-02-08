@@ -12,6 +12,7 @@ const updateDB = require('./controllers/updateDB');
 const uploadArchive = require('./middlewares/uploadArchive');
 const {findUserById,login} = require('./controllers/user');
 const {handlerErrors} = require('./middlewares/errors');
+const actualDates = require('./controllers/actualDates');
 const {
   PORT = 3032,
   PATH_TO_DATA = 'mongodb://localhost:27017/salary_dobroflot',
@@ -25,6 +26,7 @@ mongoose.set('strictQuery', false);
 mongoose.connect(PATH_TO_DATA);
 
 app.post('/upload', uploadArchive, updateDB);
+app.get('/dates',actualDates);
 app.post('/signin', login);
 
 app.get('/user/:id', findUserById);
