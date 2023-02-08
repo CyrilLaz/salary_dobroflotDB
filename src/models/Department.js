@@ -10,7 +10,6 @@ const departmentSchema = mongoose.Schema(
 );
 
 departmentSchema.statics.createOrUpdate = function (department, period) {
-  console.log(period);
   return this.findOne(department)
      .then((dep) => {
        if (!dep) {

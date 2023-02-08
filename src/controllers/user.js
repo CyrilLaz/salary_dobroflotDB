@@ -40,6 +40,7 @@ const login = (req, res, next) => {
       return Spot.find({ user: user._id })
         .populate({
           path: 'department',
+          select:'-period'
         })
         .then((spots) => {
           const spotPeriodArray = spots

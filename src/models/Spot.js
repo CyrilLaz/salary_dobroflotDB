@@ -24,7 +24,7 @@ const spotSchema = mongoose.Schema(
   { versionKey: false }
 );
 
-spotSchema.statics.сreateOrUpdate = function (spotUpd, department, user) {
+spotSchema.statics.createOrUpdate = function (spotUpd, department, user) {
   return this.findOne({
     name: spotUpd.name,
     department: department._id,
