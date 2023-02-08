@@ -13,17 +13,11 @@ const userSchema = mongoose.Schema(
       minlength: 8,
       select: false,
     },
-    // created: {
-    //   type: Date,
-    //   default: Date.now,
-    //   select: false,
-    // },
-    // updateAt: { type: Date, expires: 300, default: Date.now, index: true }, // время жизни между обновлениями юзера
-    spots: [{ type: mongoose.Schema.Types.ObjectId, ref: 'spot' }], // надо найти способ для сортировки массива по дате спота, что удобно при запросе
+    // spots: [{ type: mongoose.Schema.Types.ObjectId, ref: 'spot' }], // надо найти способ для сортировки массива по дате спота, что удобно при запросе
   },
   { versionKey: false, timestamps: true }
 );
-userSchema.index({ "updatedAt": 1 }, { expireAfterSeconds: 60*60*24*365*3 });
+userSchema.index({ "updatedAt": 1 }, { expireAfterSeconds: 60*60*24*365*3 }); // время жизни между обновлениями юзера
 
 userSchema.statics.findOrCreate = function (name) {
   return this.findOne({ name }).then((user) => {
@@ -32,8 +26,7 @@ userSchema.statics.findOrCreate = function (name) {
         (hash) => this.create({ name, password: hash })
       );
     }
-    user.updateAt = Date.now();
-    return user.save();
+    return user;
   });
 };
 
@@ -46,12 +39,12 @@ userSchema.statics.findUserByCredentials = function (name, password) {
   // console.log(name, password);
   return this.findOne({ name })
     .select('+password')
-    .populate({
-      path: 'spots',
-      populate: {
-        path: 'department',
-      },
-    })
+    // .populate({
+    //   path: 'spots',
+    //   populate: {
+    //     path: 'department',
+    //   },
+    // })
     .then((user) => {
       // console.log(user);
       if (!user) {
