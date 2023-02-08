@@ -2,7 +2,10 @@ const mongoose = require('mongoose');
 
 const spotSchema = mongoose.Schema(
   {
-    period: { from: {type: Date, expires: 60*60*24*365*3 }, till: Date },
+    period: {
+      from: { type: Date, expires: 60 * 60 * 24 * 365 * 3 },
+      till: Date,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'user',
@@ -16,6 +19,7 @@ const spotSchema = mongoose.Schema(
     hours: Number,
     accrual: Number,
     bonus: Number,
+    fine: Number,
   },
   { versionKey: false }
 );
