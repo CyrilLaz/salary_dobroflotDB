@@ -13,12 +13,13 @@ const uploadArchive = require('./middlewares/uploadArchive');
 const {findUserById,login} = require('./controllers/user');
 const {handlerErrors} = require('./middlewares/errors');
 const actualDates = require('./controllers/actualDates');
+const cors = require('./middlewares/cors');
 const {
   PORT = 3032,
   PATH_TO_DATA = 'mongodb://localhost:27017/salary_dobroflot',
 } = process.env;
 
-
+app.use(cors)
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
