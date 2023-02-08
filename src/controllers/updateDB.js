@@ -11,9 +11,9 @@ const EmptyError = require('../errors/EmptyError');
 const departments = require('../constants/departments');
 
 async function updateDB(filePath, req, res, next) {
-  console.log('#');
+
   // await unzip(filePath).then(console.log);
-  const dir = path.resolve('.temp');
+  const dirTemp = path.resolve('.temp');
   let countDep = 0,
     countUser = 0;
 
@@ -23,7 +23,7 @@ async function updateDB(filePath, req, res, next) {
     );
 
     for (i = 0; i <= 13; i++) {
-      const obj = makeObj(files[i]);
+      const obj = makeObj(path.join(dirTemp,files[i]));
       if (obj) {
         const period = obj.period;
         const dep = await Department.createOrUpdate(departments[i], period);
@@ -37,17 +37,11 @@ async function updateDB(filePath, req, res, next) {
           const user = await User.findOrCreate(el.name);
           countUser++;
           el.spots.forEach(async (spt) => {
-            await Spot.сreateOrUpdate(spt, dep, user);
-            // if (spot) {
-            //   await User.findByIdAndUpdate(user._id, {
-            //     $addToSet: { spots: spot._id },
-            //   });
-            // }
+            await Spot.createOrUpdate(spt, dep, user);
           });
         });
       }
     }
-    // fs.rmdirSync(dir,(err)=console.log(err))
   } catch (err) {
     return next(err);
   } finally {

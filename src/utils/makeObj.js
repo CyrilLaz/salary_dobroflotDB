@@ -8,7 +8,7 @@ const EmptyError = require('../errors/EmptyError');
 function makeObj(html) {
     try {
         const pageHtml = fs.readFileSync(
-    path.resolve('.temp/'+html),
+    path.resolve(html),
     'utf8'
   );
 
