@@ -26,7 +26,6 @@ const findUserById = (req, res) => {
 
 const login = (req, res, next) => {
   const { login, password } = req.body;
-  // console.log(req.body);
   User.findUserByCredentials(login, password)
     .then((user) => {
       const token = jwt.sign(

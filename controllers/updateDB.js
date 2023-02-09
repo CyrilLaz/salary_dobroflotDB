@@ -26,6 +26,7 @@ async function updateDB(filePath, req, res, next) {
       const obj = makeObj(path.join(dirTemp,files[i]));
       if (obj) {
         const period = obj.period;
+
         const dep = await Department.createOrUpdate(departments[i], period);
         if (!dep) continue; // если dep==underfined -  файл не имеет новой информации, можно его пропустить
         countDep++;
@@ -45,6 +46,7 @@ async function updateDB(filePath, req, res, next) {
   } catch (err) {
     return next(err);
   } finally {
+    fs.rm(dirTemp, { recursive: true, force: true }, next);
     if(countDep==0&&countUser==0){
       return res.status(400).send({message:'Ничего нового!'});
     }
