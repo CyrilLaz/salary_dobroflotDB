@@ -29,7 +29,7 @@ spotSchema.statics.createOrUpdate = function (spotUpd, department, user) {
     name: spotUpd.name,
     department: department._id,
     user: user._id,
-    period: { from: department.period.from }, // проверяем по полю даты "с - from", если такого нет значит надо создавать новый объект, каждый новый объект Спот отличается только по этому полю
+    'period.from': department.period.from, // проверяем по полю даты "с - from", если такого нет значит надо создавать новый объект, каждый новый объект Спот отличается только по этому полю
   }).then((spot) => {
     if (!spot) {
       // если спота нет, то создаем
