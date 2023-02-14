@@ -39,27 +39,35 @@ const login = (req, res, next) => {
       return Spot.find({ user: user._id })
         .populate({
           path: 'department',
-          select:'-period'
+          select: '-period',
         })
         .then((spots) => {
-          const spotPeriodArray = spots
+          console.log(spots);
+          const spotMonthArray = spots
             .reduce((prev, spot) => {
               //исключаем из массива одинаковые даты
-              const dateInMseconds = spot.period.from.getTime();
+              const date = dayjs(spot.period.from).format('YYYY-MM');
 
-              if (!prev.includes(dateInMseconds)) {
-                prev.push(dateInMseconds);
+              if (!prev.includes(date)) {
+                prev.push(date);
                 return prev;
               }
               return prev;
             }, [])
-            .sort((before, after) => before - after);
+            .sort((before, after) => {
+              return new Date(before + '-01') - new Date(after + '-01');
+            });
 
-          const lastSpot = spots.filter(
-            (spot) =>
-              spot.period.from.getTime() ===
-              spotPeriodArray[spotPeriodArray.length - 1]
-          );
+          const lastSpot = spots.filter((spot) => {
+            let month = spot.period.from.getMonth() + 1;
+            const year = spot.period.from.getFullYear();
+            console.log(month, '###', year);
+            if(month<=9){month=`0${month}`}
+            return (year + '-' + month).includes(
+              spotMonthArray[spotMonthArray.length - 1]
+            );
+          });
+          
           return res
             .cookie('jwt', token, {
               maxAge: 3600000 * 24 * 7, // надо ли ограничение по времени??!
@@ -71,7 +79,7 @@ const login = (req, res, next) => {
                 name: user.name,
                 spot: lastSpot,
                 password: undefined,
-                datesSpotInMsecond: spotPeriodArray,
+                spotMonthArray: spotMonthArray,
               },
             });
         });
