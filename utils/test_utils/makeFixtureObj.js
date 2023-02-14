@@ -1,7 +1,7 @@
 // обновление базы за весь прошлый месяц
 const dayjs = require('dayjs');
 const fs = require('fs');
-const path = require('path');
+const { join, resolve } = require('path');
 const object = [
   {
     name: 'Аат Сагести',
@@ -698,13 +698,13 @@ const object = [
 
 const makeFileFrom = function (obj, fileName) {
   fs.writeFileSync(
-    path.resolve('./fixture') + '/' + fileName + '.json',
+    join(resolve('./fixtures'), '/') + fileName + '.json',
     JSON.stringify(obj)
   );
   console.log(fileName + '.json', ' - file ready');
 };
 
-function NewDates(from,till) {
+function NewDates(from, till) {
   this.dateFrom = new Date(from);
   this.dateTill = new Date(till);
 
@@ -725,8 +725,8 @@ function NewDates(from,till) {
 
 (function () {
   const date = new NewDates();
-let t = 1;
-  date.setDate('1,1,2023', '1,30,2023');
+  let t = 0.5;
+  date.setDate('1,1,2023', '1,15,2023');
 
   const newObj = object.map((el) => {
     const obj = { ...el };
@@ -734,17 +734,19 @@ let t = 1;
     obj.spots = el.spots.map(
       (spot) =>
         (spot = {
-          name:spot.spot,
-          ktu:spot.ktu,
-          hours: spot.hours / t,
-          accrual: spot.accrual / t,
-          bonus: spot.bonus / t,
-          fine: spot.fine / t,
+          name: spot.spot,
+          ktu: spot.ktu,
+          hours: spot.hours * t,
+          accrual: spot.accrual * t,
+          bonus: spot.bonus * t,
+          fine: spot.fine * t,
         })
     );
     return obj;
   });
-  makeFileFrom(newObj, date.getFormatDate().from+'-'+date.getFormatDate().till);
+  makeFileFrom(
+    newObj,
+    date.getFormatDate().from + '-' + date.getFormatDate().till
+  );
   // console.log(newObj[0]);
 })();
-
