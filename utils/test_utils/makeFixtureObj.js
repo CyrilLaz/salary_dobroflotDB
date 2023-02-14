@@ -698,7 +698,7 @@ const object = [
 
 const makeFileFrom = function (obj, fileName) {
   fs.writeFileSync(
-    path.resolve('./') + '/' + fileName + '.json',
+    path.resolve('./fixture') + '/' + fileName + '.json',
     JSON.stringify(obj)
   );
   console.log(fileName + '.json', ' - file ready');
