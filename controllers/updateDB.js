@@ -22,8 +22,9 @@ async function updateDB(filePath, req, res, next) {
 
     for (i = 0; i <= 13; i++) {
       const obj = makeObj(path.join(dirTemp, files[i]));
-      objectHandle(obj, departments[i]);
-
+      if (obj) {
+        objectHandle(obj, departments[i]);
+      }
     }
   } catch (err) {
     return next(err);

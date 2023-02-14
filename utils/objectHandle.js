@@ -3,7 +3,6 @@ const Spot = require('../models/Spot');
 const User = require('../models/User');
 
 module.exports = async (obj, departments) => {
-  if (obj) {
     const period = obj.period;
 
     const dep = await Department.createOrUpdate(departments, period);
@@ -15,10 +14,9 @@ module.exports = async (obj, departments) => {
           и создаем документ спота или изменяем его если он есть
       */
       const user = await User.findOrCreate(el.name);
-
       el.spots.forEach(async (spt) => {
+        // console.log(spt);
         await Spot.createOrUpdate(spt, dep, user);
       });
     });
-  }
 };
