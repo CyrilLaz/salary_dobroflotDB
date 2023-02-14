@@ -24,33 +24,35 @@ const spotSchema = mongoose.Schema(
   { versionKey: false }
 );
 
-spotSchema.statics.createOrUpdate = function (spotUpd, department, user) {
-  return this.findOne({
+spotSchema.statics.createOrUpdate = async function (spotUpd, department, user) {
+  const spot = await this.findOne({
     name: spotUpd.name,
     department: department._id,
     user: user._id,
     'period.from': department.period.from, // проверяем по полю даты "с - from", если такого нет значит надо создавать новый объект, каждый новый объект Спот отличается только по этому полю
-  }).then((spot) => {
-    if (!spot) {
-      // если спота нет, то создаем
-      return this.create({
-        // при создании нового спота, его id надо внести в объект юзер, поэтому возвращаем новый объект
-        ...spotUpd,
-        department: department._id,
-        user: user._id,
-        period: department.period,
-      });
-    }
-    if (spot.hour !== spotUpd.hour) {
-      // если спот есть, значение свойств hour изменилось, значит есть изменения и их надо внести в БД
-      this.findByIdAndUpdate(spot._id, {
-        ...spotUpd,
-        period: department.period,
-      });
-      return;
-    }
-    return;
   });
+  if (!spot) {
+    // если спота нет, то создаем
+    return await this.create({
+      // при создании нового спота, его id надо внести в объект юзер, поэтому возвращаем новый объект
+      ...spotUpd,
+      department: department._id,
+      user: user._id,
+      period: department.period,
+    });
+  }
+  if (spot.hours < spotUpd.hours) {
+    //если спот есть, значение свойств hour изменилось, значит есть изменения и их надо внести в БД
+   await this.findByIdAndUpdate(
+      spot._id,
+      {
+        ...spotUpd,
+        period: department.period,
+      },
+    );
+    return;
+  }
+  return;
 };
 
 module.exports = mongoose.model('spot', spotSchema);
