@@ -25,6 +25,16 @@ const spotSchema = mongoose.Schema(
   { versionKey: false }
 );
 
+spotSchema.statics.findByUserIdAndDate = function (userId, { from, till }) {
+  return this.find({
+    user: userId,
+    'period.from': { $gte: from, $lte: till },
+  }).populate({
+    path: 'department',
+    select: '-period -_id',
+  }).select('-user -_id');
+};
+
 spotSchema.statics.findByUserIdMakeArrDateAndLastSpot = function (userId) {
   return this.find({ user: userId })
     .populate({
@@ -58,7 +68,7 @@ spotSchema.statics.findByUserIdMakeArrDateAndLastSpot = function (userId) {
           spotMonthArray[spotMonthArray.length - 1]
         );
       });
-      return [spotMonthArray, lastSpot]
+      return [spotMonthArray, lastSpot];
     });
 };
 

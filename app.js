@@ -9,17 +9,18 @@ const app = express();
 
 const updateDB = require('./controllers/updateDB');
 
-const uploadArchive = require('./middlewares/uploadArchive');
-const {findUserById,login} = require('./controllers/user');
-const {handlerErrors} = require('./middlewares/errors');
-const actualDates = require('./controllers/actualDates');
 const cors = require('./middlewares/cors');
+const uploadArchive = require('./middlewares/uploadArchive');
+const { findUserById, login } = require('./controllers/user');
+const { handlerErrors } = require('./middlewares/errors');
+const actualDates = require('./controllers/actualDates');
+const { findSpots } = require('./controllers/spots');
 const {
   PORT = 3032,
   PATH_TO_DATA = 'mongodb://localhost:27017/salary_dobroflot',
 } = process.env;
 
-app.use(cors)
+app.use(cors);
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -27,8 +28,16 @@ mongoose.set('strictQuery', false);
 mongoose.connect(PATH_TO_DATA);
 
 app.post('/upload', uploadArchive, updateDB);
-app.get('/dates',actualDates);
+app.get('/dates', actualDates);
 app.post('/signin', login);
+
+app.use((req, res, next) => {
+  req.user = '63eb874e5256ed38790f68c9';
+  return next();
+});
+
+app.get('/spots/:from/:till', findSpots); // запрос промежутка времени НАДО ВАЛИДИРОВАТЬ ЗАПРОС
+app.get('/spots/:from', findSpots); // запрос одного месяца НАДО ВАЛИДИРОВАТЬ ЗАПРОС
 
 app.get('/user/:id', findUserById);
 
