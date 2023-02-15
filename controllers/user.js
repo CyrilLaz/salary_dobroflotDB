@@ -36,39 +36,9 @@ const login = (req, res, next) => {
       /* нашли пользователя, надо вернуть обратно клиенту :
        * имя пользователя, информацию по последней дате, и список всех дат что есть в базе, отсортированных по возрастанию
        */
-      return Spot.find({ user: user._id })
-        .populate({
-          path: 'department',
-          select: '-period',
-        })
-        .then((spots) => {
-          console.log(spots);
-          const spotMonthArray = spots
-            .reduce((prev, spot) => {
-              //исключаем из массива одинаковые даты
-              const date = dayjs(spot.period.from).format('YYYY-MM');
-
-              if (!prev.includes(date)) {
-                prev.push(date);
-                return prev;
-              }
-              return prev;
-            }, [])
-            .sort((before, after) => {
-              return new Date(before + '-01') - new Date(after + '-01');
-            });
-
-          const lastSpot = spots.filter((spot) => {
-            let month = spot.period.from.getMonth() + 1;
-            const year = spot.period.from.getFullYear();
-            console.log(month, '###', year);
-            if(month<=9){month=`0${month}`}
-            return (year + '-' + month).includes(
-              spotMonthArray[spotMonthArray.length - 1]
-            );
-          });
-          
-          return res
+      return Spot.findByUserIdMakeArrDateAndLastSpot(user._id).then(
+        ([arr, lastSpot]) => {
+          res
             .cookie('jwt', token, {
               maxAge: 3600000 * 24 * 7, // надо ли ограничение по времени??!
               httpOnly: true,
@@ -79,10 +49,11 @@ const login = (req, res, next) => {
                 name: user.name,
                 spot: lastSpot,
                 password: undefined,
-                spotMonthArray: spotMonthArray,
+                spotMonthArray: arr,
               },
             });
-        });
+        }
+      );
     })
     .catch(next);
 };

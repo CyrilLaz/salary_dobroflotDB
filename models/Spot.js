@@ -1,3 +1,4 @@
+const dayjs = require('dayjs');
 const mongoose = require('mongoose');
 
 const spotSchema = mongoose.Schema(
@@ -24,6 +25,43 @@ const spotSchema = mongoose.Schema(
   { versionKey: false }
 );
 
+spotSchema.statics.findByUserIdMakeArrDateAndLastSpot = function (userId) {
+  return this.find({ user: userId })
+    .populate({
+      path: 'department',
+      select: '-period',
+    })
+    .then((spots) => {
+      const spotMonthArray = spots
+        .reduce((prev, spot) => {
+          //исключаем из массива одинаковые даты
+          const date = dayjs(spot.period.from).format('YYYY-MM');
+
+          if (!prev.includes(date)) {
+            prev.push(date);
+            return prev;
+          }
+          return prev;
+        }, [])
+        .sort((before, after) => {
+          return new Date(before + '-01') - new Date(after + '-01');
+        });
+
+      const lastSpot = spots.filter((spot) => {
+        let month = spot.period.from.getMonth() + 1;
+        const year = spot.period.from.getFullYear();
+        console.log(month, '###', year);
+        if (month <= 9) {
+          month = `0${month}`;
+        }
+        return (year + '-' + month).includes(
+          spotMonthArray[spotMonthArray.length - 1]
+        );
+      });
+      return [spotMonthArray, lastSpot]
+    });
+};
+
 spotSchema.statics.createOrUpdate = async function (spotUpd, department, user) {
   const spot = await this.findOne({
     name: spotUpd.name,
@@ -43,13 +81,10 @@ spotSchema.statics.createOrUpdate = async function (spotUpd, department, user) {
   }
   if (spot.hours < spotUpd.hours) {
     //если спот есть, значение свойств hour изменилось, значит есть изменения и их надо внести в БД
-   await this.findByIdAndUpdate(
-      spot._id,
-      {
-        ...spotUpd,
-        period: department.period,
-      },
-    );
+    await this.findByIdAndUpdate(spot._id, {
+      ...spotUpd,
+      period: department.period,
+    });
     return;
   }
   return;
