@@ -7,6 +7,11 @@ module.exports = (req, res, next) => {
       if (!deps) {
         return next(new Error());
       }
-      return res.send(deps);
+      const uniqDep = deps.reduce((prev, el) => {
+        if (!prev.find((item) => item.name == el.name)) return [...prev, el];
+        return prev;
+      }, []);
+
+      return res.send(uniqDep);
     });
 };
