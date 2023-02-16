@@ -4,24 +4,19 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const dayjs = require('dayjs');
 const Spot = require('../models/Spot');
+const NoExistError = require('../errors/NoExistError');
 
 const { SECRET_PASS = '12121adsad' } = process.env;
 
-const findUserById = (req, res) => {
-  User.findById(req.params.id)
-    .populate({
-      path: 'spots',
-      populate: {
-        path: 'department',
-      },
-    })
+const getUserData = (req, res, next) => {
+  User.findById(req.user)
     .then((user) => {
       if (user) {
         return res.send({ data: user });
       }
-      return res.status(404).send('не найден');
+      throw new NoExistError('Такого пользователя не найдено');
     })
-    .catch((err) => res.status(500).send(err, 'случилось не предвиденное'));
+    .catch(next);
 };
 
 const login = (req, res, next) => {
@@ -51,4 +46,4 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
-module.exports = { findUserById, login };
+module.exports = { getUserData, login };

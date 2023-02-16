@@ -13,7 +13,6 @@ const userSchema = mongoose.Schema(
       minlength: 8,
       select: false,
     },
-    // spots: [{ type: mongoose.Schema.Types.ObjectId, ref: 'spot' }], // надо найти способ для сортировки массива по дате спота, что удобно при запросе
   },
   { versionKey: false, timestamps: true }
 );
@@ -39,12 +38,6 @@ userSchema.statics.findUserByCredentials = function (name, password) {
   // console.log(name, password);
   return this.findOne({ name })
     .select('+password')
-    // .populate({
-    //   path: 'spots',
-    //   populate: {
-    //     path: 'department',
-    //   },
-    // })
     .then((user) => {
       // console.log(user);
       if (!user) {

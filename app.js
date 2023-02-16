@@ -11,10 +11,12 @@ const updateDB = require('./controllers/updateDB');
 
 const cors = require('./middlewares/cors');
 const uploadArchive = require('./middlewares/uploadArchive');
-const { findUserById, login } = require('./controllers/user');
+const { login } = require('./controllers/user');
 const { handlerErrors } = require('./middlewares/errors');
 const actualDates = require('./controllers/actualDates');
 const routerSpots = require('./routers/routerSpots');
+const routerUser = require('./routers/routerUser');
+
 const auth = require('./middlewares/auth');
 const {
   PORT = 3032,
@@ -32,9 +34,8 @@ app.post('/upload', uploadArchive, updateDB);
 app.get('/dates', actualDates);
 app.post('/signin', login);
 
+app.use('/user', auth, routerUser);
 app.use('/spots', auth, routerSpots);
-
-app.get('/user/:id', findUserById);
 
 app.use(handlerErrors);
 // console.log(new Date('2023-01-09T14:00:00.000+00:00').getFullYear());
