@@ -14,7 +14,7 @@ const uploadArchive = require('./middlewares/uploadArchive');
 const { findUserById, login } = require('./controllers/user');
 const { handlerErrors } = require('./middlewares/errors');
 const actualDates = require('./controllers/actualDates');
-const { findSpots } = require('./controllers/spots');
+const routerSpots = require('./routers/routerSpots');
 const auth = require('./middlewares/auth');
 const {
   PORT = 3032,
@@ -32,8 +32,7 @@ app.post('/upload', uploadArchive, updateDB);
 app.get('/dates', actualDates);
 app.post('/signin', login);
 
-app.get('/spots/:from/:till',auth, findSpots); // запрос промежутка времени НАДО ВАЛИДИРОВАТЬ ЗАПРОС
-app.get('/spots/:from',auth, findSpots); // запрос одного месяца НАДО ВАЛИДИРОВАТЬ ЗАПРОС
+app.use('/spots', auth, routerSpots);
 
 app.get('/user/:id', findUserById);
 

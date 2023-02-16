@@ -36,24 +36,17 @@ const login = (req, res, next) => {
       /* нашли пользователя, надо вернуть обратно клиенту :
        * имя пользователя, информацию по последней дате, и список всех дат что есть в базе, отсортированных по возрастанию
        */
-      return Spot.findByUserIdMakeArrDateAndLastSpot(user._id).then(
-        ([arr, lastSpot]) => {
-          res
-            .cookie('jwt', token, {
-              maxAge: 3600000 * 24 * 7, // надо ли ограничение по времени??!
-              httpOnly: true,
-              sameSite: true,
-            })
-            .send({
-              data: {
-                name: user.name,
-                spot: lastSpot,
-                password: undefined,
-                spotMonthArray: arr,
-              },
-            });
-        }
-      );
+      return res
+        .cookie('jwt', token, {
+          maxAge: 3600000 * 24 * 7, // надо ли ограничение по времени??!
+          httpOnly: true,
+          sameSite: true,
+        })
+        .send({
+          data: {
+            name: user.name,
+          },
+        });
     })
     .catch(next);
 };

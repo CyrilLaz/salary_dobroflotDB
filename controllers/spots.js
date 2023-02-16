@@ -17,3 +17,16 @@ module.exports.findSpots = (req, res, next) => {
     till: finalDay,
   }).then((spots) => res.send(spots));
 };
+
+module.exports.getSpotAndDates = (req, res, next) => {
+  return Spot.findByUserIdMakeArrDateAndLastSpot(req.user._id)
+    .then(([arr, lastSpot]) => {
+      res.send({
+        data: {
+          spot: lastSpot,
+          spotMonthArray: arr,
+        },
+      });
+    })
+    .catch(next);
+};
