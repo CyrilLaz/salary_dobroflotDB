@@ -3,7 +3,6 @@ const fs = require('fs');
 // const dayjs = require('dayjs');
 const path = require('path');
 const {MakeObject} = require('./makeObjectFromDom');
-const EmptyError = require('../errors/EmptyError');
 
 function makeObj(html) {
     try {

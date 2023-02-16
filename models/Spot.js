@@ -60,7 +60,6 @@ spotSchema.statics.findByUserIdMakeArrDateAndLastSpot = function (userId) {
       const lastSpot = spots.filter((spot) => {
         let month = spot.period.from.getMonth() + 1;
         const year = spot.period.from.getFullYear();
-        console.log(month, '###', year);
         if (month <= 9) {
           month = `0${month}`;
         }

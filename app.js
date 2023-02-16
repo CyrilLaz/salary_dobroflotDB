@@ -15,6 +15,7 @@ const { findUserById, login } = require('./controllers/user');
 const { handlerErrors } = require('./middlewares/errors');
 const actualDates = require('./controllers/actualDates');
 const { findSpots } = require('./controllers/spots');
+const auth = require('./middlewares/auth');
 const {
   PORT = 3032,
   PATH_TO_DATA = 'mongodb://localhost:27017/salary_dobroflot',
@@ -31,13 +32,8 @@ app.post('/upload', uploadArchive, updateDB);
 app.get('/dates', actualDates);
 app.post('/signin', login);
 
-app.use((req, res, next) => {
-  req.user = '63eb874e5256ed38790f68c9';
-  return next();
-});
-
-app.get('/spots/:from/:till', findSpots); // запрос промежутка времени НАДО ВАЛИДИРОВАТЬ ЗАПРОС
-app.get('/spots/:from', findSpots); // запрос одного месяца НАДО ВАЛИДИРОВАТЬ ЗАПРОС
+app.get('/spots/:from/:till',auth, findSpots); // запрос промежутка времени НАДО ВАЛИДИРОВАТЬ ЗАПРОС
+app.get('/spots/:from',auth, findSpots); // запрос одного месяца НАДО ВАЛИДИРОВАТЬ ЗАПРОС
 
 app.get('/user/:id', findUserById);
 
