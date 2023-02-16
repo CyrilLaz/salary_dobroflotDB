@@ -46,4 +46,12 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
-module.exports = { getUserData, login };
+const logout = (req, res) => {
+  const { jwt: token } = req.cookies;
+  res
+    .cookie('jwt', token, {
+      maxAge: 0,
+    })
+    .send({data:{message: 'Осуществлен выход из профиля'}  });
+};
+module.exports = { getUserData, login, logout };

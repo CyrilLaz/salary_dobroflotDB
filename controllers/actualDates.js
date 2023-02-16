@@ -12,6 +12,6 @@ module.exports = (req, res, next) => {
         return prev;
       }, []);
 
-      return res.send(uniqDep);
+      return res.send({data:uniqDep});
     });
 };

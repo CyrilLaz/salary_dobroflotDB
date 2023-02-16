@@ -11,7 +11,7 @@ const updateDB = require('./controllers/updateDB');
 
 const cors = require('./middlewares/cors');
 const uploadArchive = require('./middlewares/uploadArchive');
-const { login } = require('./controllers/user');
+const { login, logout } = require('./controllers/user');
 const { handlerErrors } = require('./middlewares/errors');
 const actualDates = require('./controllers/actualDates');
 const routerSpots = require('./routers/routerSpots');
@@ -33,6 +33,8 @@ mongoose.connect(PATH_TO_DATA);
 app.post('/upload', uploadArchive, updateDB);
 app.get('/dates', actualDates);
 app.post('/signin', login);
+app.delete('/signout', auth, logout);
+
 
 app.use('/user', auth, routerUser);
 app.use('/spots', auth, routerSpots);
