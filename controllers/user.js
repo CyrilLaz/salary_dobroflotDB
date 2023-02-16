@@ -1,12 +1,10 @@
-require('dotenv').config();
 const User = require('../models/User');
 
 const jwt = require('jsonwebtoken');
-const dayjs = require('dayjs');
-const Spot = require('../models/Spot');
 const NoExistError = require('../errors/NoExistError');
 
-const { SECRET_PASS = '12121adsad' } = process.env;
+const { SECRET_PASS = '12121adsad', TIME_TO_LIVE_TOKEN = 3600000 * 24 * 7 } =
+  process.env;
 
 const getUserData = (req, res, next) => {
   User.findById(req.user)
@@ -26,14 +24,14 @@ const login = (req, res, next) => {
       const token = jwt.sign(
         { _id: user._id },
         SECRET_PASS, // секретный код
-        { expiresIn: '7d' } // надо ли ограничение по времени??!
+        { expiresIn: TIME_TO_LIVE_TOKEN } // надо ли ограничение по времени??!
       );
       /* нашли пользователя, надо вернуть обратно клиенту :
        * имя пользователя, информацию по последней дате, и список всех дат что есть в базе, отсортированных по возрастанию
        */
       return res
         .cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7, // надо ли ограничение по времени??!
+          maxAge: TIME_TO_LIVE_TOKEN, // надо ли ограничение по времени??!
           httpOnly: true,
           sameSite: true,
         })
@@ -52,6 +50,6 @@ const logout = (req, res) => {
     .cookie('jwt', token, {
       maxAge: 0,
     })
-    .send({data:{message: 'Осуществлен выход из профиля'}  });
+    .send({ data: { message: 'Осуществлен выход из профиля' } });
 };
 module.exports = { getUserData, login, logout };
