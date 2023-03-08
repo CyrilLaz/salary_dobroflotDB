@@ -88,7 +88,7 @@ spotSchema.statics.createOrUpdate = async function (spotUpd, department, user) {
       period: department.period,
     });
   }
-  if(user.name==='Коршунов Михаил Валерьевич') {
+  if(user._id==='63ee2a569aa891440eeaa492') {
     console.log('spot:',spot);
     console.log('spotUpd:',spotUpd);
   }
