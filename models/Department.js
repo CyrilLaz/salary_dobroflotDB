@@ -23,7 +23,7 @@ departmentSchema.statics.createOrUpdate = function (department, period) {
          console.log(
            'подавай следующий файл, тут ничего интересного'
          ); /*что делать при совпадении, проверяем следующий файл как бы */
-         return ;
+         return dep;
        }
        console.log('тут надо поподробнее поглядеть');
        return this.findByIdAndUpdate(dep._id,{period},{new:true},)
