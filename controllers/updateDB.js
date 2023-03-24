@@ -12,7 +12,7 @@ const departments = require('../constants/departments');
 const objectHandle = require('../utils/objectHandle');
 
 async function updateDB(filePath, req, res, next) {
-  // await unzip(filePath).then(console.log);
+
   const dirTemp = path.resolve('.temp');
 
   try {

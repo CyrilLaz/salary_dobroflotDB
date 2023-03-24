@@ -2,17 +2,9 @@ class MakeObject {
   constructor(page) {
     this.page = page;
     this.table = this.page.querySelector('TABLE');
-    this.tableRows = Array.from(this.table.querySelectorAll('tr'));
     this.result = [];
-    this.rows = this.tableRows.slice(3, this.tableRows.length - 1);
-    this.namesSelectorArray = this._findNameRows();
-
-    this.nameFields = Array.from(
-      this.rows.filter((el) =>
-        this.namesSelectorArray.some((sel) => el.querySelector(sel))
-      )
-    );
     this.period = this._getDates();
+    this.columns = this.table.querySelectorAll('col');
   }
 
   _getDates() {
@@ -29,7 +21,6 @@ class MakeObject {
 
   createArray() {
     this._makeObject();
-    //this._getInfo();
     return this.result;
   }
 
@@ -42,8 +33,8 @@ class MakeObject {
     return array
       .filter(
         (el) =>
-          el.cssText.includes('#f8f2d8') ||
-          el.cssText.includes('rgb(248, 242, 216)')
+          el.style['background-color'] === '#f8f2d8' ||
+          el.style['background-color'] === '#rgb(248, 242, 216)'
       )
       .map((el) => el.selectorText);
   }
@@ -55,30 +46,41 @@ class MakeObject {
   }
 
   _makeObject() {
-    this.nameFields.forEach((el) => {
+    const tableRows = Array.from(this.table.querySelectorAll('tr'));
+    const rows = tableRows.slice(3, tableRows.length - 1);
+    const namesSelectorArray = this._findNameRows();
+    const nameFields = Array.from(
+      rows.filter((el) =>
+        namesSelectorArray.some((sel) => el.querySelector(sel))
+      )
+    );
+
+    const getDetails = this._getDetails.bind(this);
+    
+    function _getSpots(el) {
+      const res = [];
+      let name = el.nextElementSibling;
+
+      do {
+        res.push(getDetails(name));
+        name = name.nextElementSibling;
+      } while (!nameFields.includes(name) && rows.includes(name));
+
+      return res;
+    }
+
+    nameFields.forEach((el) => {
       const name = this._getChildElement(el);
-      const spots = this._getSpots(el);
+      const spots = _getSpots(el);
 
       const obj = {
         name: name.textContent,
+        period: this.period,
+        spots: spots,
       };
-      obj.period = this.period;
-      obj.spots = spots;
 
       this.result.push(obj);
     });
-  }
-
-  _getSpots(el) {
-    const res = [];
-    let name = el.nextElementSibling;
-
-    do {
-      res.push(this._getDetails(name));
-      name = name.nextElementSibling;
-    } while (!this.nameFields.includes(name) && this.rows.includes(name));
-
-    return res;
   }
 
   _getChildElement(el) {
@@ -98,9 +100,10 @@ class MakeObject {
   }
 
   _makeNumberFromString(string) {
-    let num = string.replace(/,/g, '.');
+    let num = 0;
+    if (!string) return num;
+    num = string.replace(/,/g, '.');
     num = parseFloat(num.replace(/\s/g, ''));
-    if (!string) num = 0;
     return num;
   }
 }
